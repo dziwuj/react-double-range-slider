@@ -29,8 +29,8 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/dziwuj/repo_name">
-    <img src="images/react-range-slider-screenshot.png" alt="Logo" width="500" height="700">
+  <a href="https://github.com/dziwuj/react-double-range-slider">
+    <img src="src/images/react-range-slider-screenshot.png" alt="Image" width="500" height="700">
   </a>
 
 <h3 align="center">react-double-range-slider</h3>
@@ -38,14 +38,14 @@
   <p align="center">
     A customizable React slider used for getting range of values
     <br />
-    <a href="https://github.com/dziwuj/repo_name"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/dziwuj/react-double-range-slider"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/dziwuj/repo_name">View Demo</a>
+    <a href="https://github.com/dziwuj/react-double-range-slider">View Demo</a>
     ·
-    <a href="https://github.com/dziwuj/repo_name/issues">Report Bug</a>
+    <a href="https://github.com/dziwuj/react-double-range-slider/issues">Report Bug</a>
     ·
-    <a href="https://github.com/dziwuj/repo_name/issues">Request Feature</a>
+    <a href="https://github.com/dziwuj/react-double-range-slider/issues">Request Feature</a>
   </p>
 </div>
   </br>
@@ -80,7 +80,7 @@
 <!--
 ## About The Project
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `repo_name`, `linkedin_username`, `email_client`, `email`, `project_description`
+Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `react-double-range-slider`, `linkedin_username`, `email_client`, `email`, `project_description`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
   </br>
@@ -118,7 +118,7 @@ Install library on your device
 1. Get a free API Key at [https://example.com](https://example.com)
 2. Clone the repo
     ```sh
-    git clone https://github.com/dziwuj/repo_name.git
+    git clone https://github.com/dziwuj/react-double-range-slider.git
     ```
 3. Install NPM packages
     ```sh
@@ -154,7 +154,7 @@ _For example, please refer to the [Code sandbox](https://codesandbox.io/s/react-
 -   [ ] Feature 3
     -   [ ] Nested Feature
 
-See the [open issues](https://github.com/dziwuj/repo_name/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/dziwuj/react-double-range-slider/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
@@ -189,7 +189,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 Zbyszko Sobecki - [@sobecki_zbyszko](https://twitter.com/sobecki_zbyszko) - sobeckizbyszko@gmail.com
 
-Project Link: [https://github.com/dziwuj/repo_name](https://github.com/dziwuj/repo_name)
+Project Link: [https://github.com/dziwuj/react-double-range-slider](https://github.com/dziwuj/react-double-range-slider)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -206,16 +206,16 @@ Project Link: [https://github.com/dziwuj/repo_name](https://github.com/dziwuj/re
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/dziwuj/repo_name.svg?style=for-the-badge
-[contributors-url]: https://github.com/dziwuj/repo_name/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/dziwuj/repo_name.svg?style=for-the-badge
-[forks-url]: https://github.com/dziwuj/repo_name/network/members
-[stars-shield]: https://img.shields.io/github/stars/dziwuj/repo_name.svg?style=for-the-badge
-[stars-url]: https://github.com/dziwuj/repo_name/stargazers
-[issues-shield]: https://img.shields.io/github/issues/dziwuj/repo_name.svg?style=for-the-badge
-[issues-url]: https://github.com/dziwuj/repo_name/issues
-[license-shield]: https://img.shields.io/github/license/dziwuj/repo_name.svg?style=for-the-badge
-[license-url]: https://github.com/dziwuj/repo_name/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/dziwuj/react-double-range-slider.svg?style=for-the-badge
+[contributors-url]: https://github.com/dziwuj/react-double-range-slider/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/dziwuj/react-double-range-slider.svg?style=for-the-badge
+[forks-url]: https://github.com/dziwuj/react-double-range-slider/network/members
+[stars-shield]: https://img.shields.io/github/stars/dziwuj/react-double-range-slider.svg?style=for-the-badge
+[stars-url]: https://github.com/dziwuj/react-double-range-slider/stargazers
+[issues-shield]: https://img.shields.io/github/issues/dziwuj/react-double-range-slider.svg?style=for-the-badge
+[issues-url]: https://github.com/dziwuj/react-double-range-slider/issues
+[license-shield]: https://img.shields.io/github/license/dziwuj/react-double-range-slider.svg?style=for-the-badge
+[license-url]: https://github.com/dziwuj/react-double-range-slider/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/zbyszkosobecki/
 [product-screenshot]: images/screenshot.png
