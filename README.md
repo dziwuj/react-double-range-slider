@@ -41,7 +41,7 @@
     <a href="https://github.com/dziwuj/react-double-range-slider"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/dziwuj/react-double-range-slider">View Demo</a>
+    <a href="https://codesandbox.io/s/react-double-range-slider-xi8i2r">View Demo</a>
     ·
     <a href="https://github.com/dziwuj/react-double-range-slider/issues">Report Bug</a>
     ·
@@ -112,6 +112,8 @@ Install library on your device
     ```sh
     yarn add react-double-range-slider
     ```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ### Installation
 
