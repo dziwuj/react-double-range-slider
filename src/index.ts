@@ -1,2 +1,2 @@
-export * as default from "./components";
+export * from "./components";
 import "./components/RangeSlider/RangeSlider.scss";

@@ -16,5 +16,6 @@
         "declarationDir": "types",
         "emitDeclarationOnly": true,
         "experimentalDecorators": true
-    }
+    },
+    "include": ["src/**/*", "/src/globals.d.ts"]
 }

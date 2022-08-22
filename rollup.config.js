@@ -8,6 +8,7 @@ import postcss from "rollup-plugin-postcss";
 import autoprefixer from "autoprefixer";
 import "rollup-plugin-export-default";
 import sass from "node-sass";
+import pkg from "./package.json";
 
 const packageJson = require("./package.json");
 
@@ -47,10 +48,11 @@ export default [
                 },
                 sourceMap: true,
                 extract: true,
+                inject: true,
             }),
             terser(),
         ],
-        external: ["react", "react-dom"],
+        external: [...Object.keys(pkg.peerDependencies || {})],
     },
     {
         input: "dist/esm/index.d.ts",

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-
 import "./RangeSlider.scss";
 
 import { RangeSliderProps, Status } from "./RangeSlider.types";
@@ -91,7 +90,13 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     }, []);
 
     useEffect(() => {
-        if (minTooltipRef.current && maxTooltipRef.current) setMerged(checkCollision(minTooltipRef.current, maxTooltipRef.current));
+        if (minTooltipRef.current && maxTooltipRef.current)
+            setMerged(
+                checkCollision(
+                    minTooltipRef.current,
+                    maxTooltipRef.current || (min.valueIndex === max.valueIndex && min.valueIndex !== null && max.valueIndex !== null)
+                )
+            );
     }, [minTooltipLeft, maxTooltipLeft]);
 
     useEffect(() => {
@@ -220,7 +225,10 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
             if (minTooltipRef.current && maxTooltipRef.current) {
                 setMinTooltipLeft(minTooltipRef.current.clientWidth / 2);
                 setMaxTooltipLeft(maxTooltipRef.current.clientWidth / 2);
-                setMerged(checkCollision(minTooltipRef.current, maxTooltipRef.current));
+                setMerged(
+                    checkCollision(minTooltipRef.current, maxTooltipRef.current) ||
+                        (min.valueIndex === max.valueIndex && min.valueIndex !== null && max.valueIndex !== null)
+                );
             }
         }
         setUpdate(null);
