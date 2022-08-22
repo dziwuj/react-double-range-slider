@@ -8,6 +8,9 @@ export interface RangeSliderProps {
     tooltipVisibility?: "always" | "hover" | "never";
     tooltipPosition?: "under" | "over";
     value: Simple | any[];
+    from?: number | string;
+    to?: number | string;
+    formatter?: (value: number | string) => string;
     onChange: (x: any) => void;
 }
 

@@ -67,10 +67,15 @@
         <!-- <li><a href="#installation">Installation</a></li> -->
       </ul>
     </li>
-    <!-- <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li> -->
+    <li>
+      <a href="#usage">Usage</a>
+      <ul>
+          <li><a href="#props">Props</a></li>
+      </ul>
+    </li>
+    <!-- <li><a href="#roadmap">Roadmap</a></li> -->
     <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
+    <!-- <li><a href="#license">License</a></li> -->
     <li><a href="#contact">Contact</a></li>
     <!-- <li><a href="#acknowledgments">Acknowledgments</a></li> -->
   </ol>
@@ -137,15 +142,32 @@ Install library on your device
 
 ## Usage
 
-To use this component you have to import default from library. Additionally it is recommended to also import default styles from
+To use this component you have to import default from library. Additionally it is recommended to also import default styles.
 
-"react-double-range-slider/dist/cjs/index.css"
+```js
+import "react-double-range-slider/dist/cjs/index.css";
+```
 
 This will probably change in the future to improve user experience.
 
 _For example, please refer to the [Code sandbox](https://codesandbox.io/s/react-double-range-slider-xi8i2r)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Props
+
+| Name              | Type                                               | Required | Default                                                                               | Description                                     |
+| ----------------- | -------------------------------------------------- | -------- | ------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| value             | {min: `number`, max: `number`} \| Array [`string`] | Yes      | ` `                                                                                   | Values used in array                            |
+| onChange          | (x: `any`) => `void`;                              | Yes      | (x: `any`)=> { min: `string`, max: `string`, minIndex: `number`, maxIndex: `number` } | Callback function called when the value changes |
+| formatter         | (value: `number` \| `string`) => `string`;         | No       | (value) => value;                                                                     | Function used to change label format            |
+| from              | `number` \| `string`                               | No       | 0                                                                                     | Default start position                          |
+| to                | `number` \| `string`                               | No       | 0                                                                                     | Default end position                            |
+| tooltipVisibility | `"always"` \| `"hover"` \| `"never"`               | No       | `"always"`                                                                            | Tooltip display type                            |
+| tooltipPosition   | `"under"` \| `"over"`                              | No       | `"over"`                                                                              | Tooltip position                                |
+| hasSteps          | `boolean `                                         | No       | `false`                                                                               | Determines if slider should have steps          |
+
+</br><p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ROADMAP -->
 <!--
@@ -179,11 +201,11 @@ Don't forget to give the project a star! Thanks again!
 
 <!-- LICENSE -->
 
-## License
+<!-- ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 <!-- CONTACT -->
 

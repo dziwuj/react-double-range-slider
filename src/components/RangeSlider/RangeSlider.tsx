@@ -19,12 +19,19 @@ const checkCollision = (el1: HTMLElement, el2: HTMLElement) => {
     );
 };
 
-const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, tooltipPosition, value, onChange }) => {
+const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, tooltipPosition, value, onChange, from, to, formatter }) => {
     const values = value instanceof Array ? value : Array.from(range(value.min, value.max + 1, 1));
-    const [min, setMin] = useState<Status>({ value: values.at(0) instanceof Array ? values.at(0) : values.at(0).toString(), valueIndex: 0 });
+    const start = from ? (values.indexOf(from) === -1 ? 0 : values.indexOf(from)) : 0;
+    const end = to ? (values.indexOf(to) === -1 ? values.length - 1 : values.indexOf(to)) : values.length - 1;
+    const format = formatter ? formatter : (x: string | number) => `${x}`;
+
+    const [min, setMin] = useState<Status>({
+        value: format(values.at(start)),
+        valueIndex: start,
+    });
     const [max, setMax] = useState<Status>({
-        value: values.at(values.length - 1) instanceof String ? values.at(values.length - 1) : values.at(values.length - 1).toString(),
-        valueIndex: values.length - 1,
+        value: format(values.at(end)),
+        valueIndex: end,
     });
     if (!tooltipVisibility) tooltipVisibility = "always";
     const [minLeft, setMinLeft] = useState<number | null>(null);
@@ -73,20 +80,29 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
         }
         if (minRef.current) {
             setMinLimit(minRef.current.clientWidth / -2);
-            setMinLeft(minRef.current.clientWidth / -2);
+            setMinLeft((railRef.current!.clientWidth / (values.length - 1)) * start - minRef.current.clientWidth / 2);
         }
 
         if (maxRef.current && trackRef.current) {
             setMaxLimit(trackRef.current.clientWidth - maxRef.current.clientWidth / 2);
-            setMaxLeft(trackRef.current.clientWidth - maxRef.current.clientWidth / 2);
+            setMaxLeft((railRef.current!.clientWidth / (values.length - 1)) * end - maxRef.current.clientWidth / 2);
         }
 
-        if (trackRef.current) setTrack({ width: trackRef.current.clientWidth, left: trackRef.current.offsetLeft });
+        const trackWidth = (railRef.current!.clientWidth / (values.length - 1)) * end - (railRef.current!.clientWidth / (values.length - 1)) * start;
+        const trackLeft = (railRef.current!.clientWidth / (values.length - 1)) * start;
+
+        if (trackRef.current)
+            setTrack({
+                width: trackWidth,
+                left: trackLeft,
+            });
 
         if (minTooltipRef.current && maxTooltipRef.current) {
             setMinTooltipLeft(minTooltipRef.current.clientWidth / 2);
             setMaxTooltipLeft(maxTooltipRef.current.clientWidth / 2);
         }
+
+        if (midTooltipRef.current) setMidTooltipLeft(trackLeft + trackWidth / 2 - midTooltipRef.current.clientWidth / 2);
     }, []);
 
     useEffect(() => {
@@ -219,8 +235,8 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
             index >= values.length ? (index = values.length - 1) : index;
             const stringValue = values.at(index) instanceof String ? values.at(index) : values.at(index).toString();
 
-            if (closer === minRef.current) setMin({ value: stringValue, valueIndex: index });
-            if (closer === maxRef.current) setMax({ value: stringValue, valueIndex: index });
+            if (closer === minRef.current) setMin({ value: format(stringValue), valueIndex: index });
+            if (closer === maxRef.current) setMax({ value: format(stringValue), valueIndex: index });
 
             if (minTooltipRef.current && maxTooltipRef.current) {
                 setMinTooltipLeft(minTooltipRef.current.clientWidth / 2);
