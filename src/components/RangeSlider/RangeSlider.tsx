@@ -141,7 +141,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     }, [update]);
 
     useEffect(() => {
-        onChange({ min: min.value, max: max.value });
+        onChange({ min: min.value, max: max.value, minIndex: min.valueIndex, maxIndex: max.valueIndex });
     }, [min.value, max.value]);
 
     useEffect(() => {
