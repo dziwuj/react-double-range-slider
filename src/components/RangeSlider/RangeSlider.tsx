@@ -206,7 +206,6 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     }, [currentMousePosition]);
 
     const jumpTo = (e: any) => {
-        e.preventDefault();
         if (minRef.current && maxRef.current && ballSize && minLimit && maxLimit && minLeft !== null && maxLeft !== null) {
             const closer =
                 Math.abs(e.clientX - minRef.current.getBoundingClientRect().left) > Math.abs(e.clientX - maxRef.current.getBoundingClientRect().left)
@@ -214,7 +213,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                     : minRef.current;
             setCurrLeft(closer.offsetLeft);
 
-            console.log(closer);
+            // console.log(closer);
             const newPosition = closer.offsetLeft + (e.clientX - closer.getBoundingClientRect().left) - ballSize / 2;
             const step = Math.round(newPosition / (railRef.current!.clientWidth / (values.length - 1)));
             const newStepPosition = (railRef.current!.clientWidth / (values.length - 1)) * step - ballSize / 2;
@@ -249,7 +248,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
             let index = Math.floor(left / marks);
             index >= values.length ? (index = values.length - 1) : index;
 
-            console.log(left);
+            // console.log(left);
 
             const stringValue = values.at(index) instanceof String ? values.at(index) : values.at(index).toString();
 
@@ -337,7 +336,6 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                     }
                 }}
                 onMouseDown={(e) => {
-                    e.preventDefault();
                     setStartX(currentMousePosition);
                     setLastMoved(minRef.current);
                     setCurrLeft(minLeft);
@@ -382,7 +380,6 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                     }
                 }}
                 onMouseDown={(e) => {
-                    e.preventDefault();
                     setStartX(currentMousePosition);
                     setLastMoved(maxRef.current);
                     setCurrLeft(maxLeft);
