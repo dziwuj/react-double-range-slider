@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { inherits } from "util";
 import "./RangeSlider.scss";
 
 import { RangeSliderProps, Status } from "./RangeSlider.types";
@@ -61,19 +62,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     const [currLeft, setCurrLeft] = useState<number | null>(null);
     const [update, setUpdate] = useState<HTMLDivElement | null>(null);
 
-    useEffect(() => {
-        document.addEventListener("mousemove", (e) => {
-            setCurrentMousePosition(e.clientX);
-        });
-        document.addEventListener("mouseup", (e) => {
-            setStartX(null);
-            setMoving(false);
-            if (tooltipVisibility === "hover") {
-                setMinVisibility("hidden");
-                setMaxVisibility("hidden");
-                setMidVisibility("hidden");
-            }
-        });
+    function init() {
         if (railRef.current && maxRef.current) {
             setMaxLeft(railRef.current.clientWidth - maxRef.current.clientWidth / 2);
             setBallSize(maxRef.current.clientWidth);
@@ -103,6 +92,32 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
         }
 
         if (midTooltipRef.current) setMidTooltipLeft(trackLeft + trackWidth / 2 - midTooltipRef.current.clientWidth / 2);
+    }
+
+    function updateSize() {
+        init();
+    }
+
+    useEffect(() => {
+        document.addEventListener("mousemove", (e) => {
+            setCurrentMousePosition(e.clientX);
+        });
+        document.addEventListener("mouseup", (e) => {
+            setStartX(null);
+            setMoving(false);
+            if (tooltipVisibility === "hover") {
+                setMinVisibility("hidden");
+                setMaxVisibility("hidden");
+                setMidVisibility("hidden");
+            }
+        });
+        window.addEventListener("resize", updateSize);
+
+        init();
+
+        return () => {
+            window.removeEventListener("resize", updateSize);
+        };
     }, []);
 
     useEffect(() => {
