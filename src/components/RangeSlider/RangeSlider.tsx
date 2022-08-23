@@ -228,11 +228,14 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     const updateValue = (closer: HTMLDivElement) => {
         if (railRef.current && trackRef.current && closer && ballSize) {
             const marks = railRef.current.clientWidth / values.length;
-            let left = Number(closer.style.left.replace("px", ""));
-            left = left > railRef.current.clientWidth ? railRef.current.clientWidth : left;
+            let left = Number(window.getComputedStyle(closer).left.replace("px", ""));
+            left = left > railRef.current.clientWidth ? railRef.current.clientWidth + ballSize / 2 : left + ballSize / 2;
             left = left <= 0 ? 0 : left;
-            let index = Math.floor((left + ballSize / 2) / marks);
+            let index = Math.floor(left / marks);
             index >= values.length ? (index = values.length - 1) : index;
+
+            console.log(left);
+
             const stringValue = values.at(index) instanceof String ? values.at(index) : values.at(index).toString();
 
             if (closer === minRef.current) setMin({ value: format(stringValue), valueIndex: index });
@@ -271,7 +274,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
             <div
                 className="track"
                 ref={trackRef}
-                style={track ? { left: `${track.left}px`, width: `${track.width}px` } : undefined}
+                style={track ? { left: `${(track.left / railRef.current?.clientWidth!) * 100}%`, width: `${track.width}px` } : undefined}
                 onMouseOver={() => {
                     if (tooltipVisibility === "hover" && merged) {
                         setMidVisibility("visible");
@@ -298,7 +301,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
             ></div>
             <div
                 className={`min ball${lastMoved === minRef.current ? " active" : ""}`}
-                style={{ left: `${minLeft}px` }}
+                style={{ left: `${(minLeft! / railRef.current?.clientWidth!) * 100}%` }}
                 ref={minRef}
                 onMouseOver={() => {
                     if (tooltipVisibility === "hover" && !merged) {
@@ -343,7 +346,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
             </div>
             <div
                 className={`max ball${lastMoved === maxRef.current ? " active" : ""}`}
-                style={{ left: `${maxLeft}px` }}
+                style={{ left: `${(maxLeft! / railRef.current?.clientWidth!) * 100}%` }}
                 ref={maxRef}
                 onMouseOver={() => {
                     if (tooltipVisibility === "hover" && !merged) {

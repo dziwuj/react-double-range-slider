@@ -142,9 +142,10 @@ Install library on your device
 
 ## Usage
 
-To use this component you have to import default from library. Additionally it is recommended to also import default styles.
+To use this component you have to import RangeSlider from library. Additionally it is recommended to also import default styles.
 
 ```js
+import { RangeSlider } from "react-double-range-slider";
 import "react-double-range-slider/dist/cjs/index.css";
 ```
 
