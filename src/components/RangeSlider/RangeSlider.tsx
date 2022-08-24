@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { inherits } from "util";
 import "./RangeSlider.scss";
 
 import { RangeSliderProps, Status } from "./RangeSlider.types";
@@ -273,8 +272,8 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     };
 
     return (
-        <div className="slider-container">
-            <div className="rail" ref={railRef} onClick={jumpTo}>
+        <div className="double-range-slider-container">
+            <div className="double-range-slider-rail" ref={railRef} onClick={jumpTo}>
                 {hasSteps &&
                     values.map((value, index) => {
                         return (
@@ -283,7 +282,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                             index < values.length - 1 && (
                                 <div
                                     key={index}
-                                    className="step"
+                                    className="double-range-slider-step"
                                     style={{ left: `${(railRef.current.clientWidth / (values.length - 1)) * index - 2.5}px` }}
                                 ></div>
                             )
@@ -291,7 +290,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                     })}
             </div>
             <div
-                className="track"
+                className="double-range-slider-track"
                 ref={trackRef}
                 style={track ? { left: `${(track.left / railRef.current?.clientWidth!) * 100}%`, width: `${track.width}px` } : undefined}
                 onMouseOver={() => {
@@ -319,7 +318,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                 onClick={jumpTo}
             ></div>
             <div
-                className={`min ball${lastMoved === minRef.current ? " active" : ""}`}
+                className={`double-range-slider-min double-range-slider-ball${lastMoved === minRef.current ? " double-range-slider-active" : ""}`}
                 style={{ left: `${(minLeft! / railRef.current?.clientWidth!) * 100}%` }}
                 ref={minRef}
                 onMouseOver={() => {
@@ -348,22 +347,26 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                 }}
             >
                 <div
-                    className={`tooltip ${tooltipPosition ? tooltipPosition : "over"}`}
+                    className={`double-range-slider-tooltip ${tooltipPosition ? `double-range-slider-${tooltipPosition}` : "double-range-slider-over"}`}
                     style={{ visibility: minVisibility, marginLeft: `-${minTooltipLeft}px` }}
                     ref={minTooltipRef}
                 >
-                    <p className="min-text-holder text-holder">{min.value}</p>
+                    <p className="double-range-slider-min-text-holder double-range-slider-text-holder">{min.value}</p>
                 </div>
             </div>
             <div
-                className={`mid tooltip ${tooltipPosition ? tooltipPosition : "over"}`}
+                className={`double-range-slider-mid double-range-slider-tooltip ${
+                    tooltipPosition ? `double-range-slider-${tooltipPosition}` : "double-range-slider-over"
+                }`}
                 ref={midTooltipRef}
                 style={{ visibility: midVisibility, left: `${midTooltipLeft}px` }}
             >
-                <p className="mid-text-holder text-holder">{min.value === max.value ? `${min.value}` : `${min.value} - ${max.value}`}</p>
+                <p className="double-range-slider-mid-text-holder double-range-slider-text-holder">
+                    {min.value === max.value ? `${min.value}` : `${min.value} - ${max.value}`}
+                </p>
             </div>
             <div
-                className={`max ball${lastMoved === maxRef.current ? " active" : ""}`}
+                className={`double-range-slider-max double-range-slider-ball${lastMoved === maxRef.current ? " double-range-slider-active" : ""}`}
                 style={{ left: `${(maxLeft! / railRef.current?.clientWidth!) * 100}%` }}
                 ref={maxRef}
                 onMouseOver={() => {
@@ -392,11 +395,11 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                 }}
             >
                 <div
-                    className={`tooltip ${tooltipPosition ? tooltipPosition : "over"}`}
+                    className={`double-range-slider-tooltip ${tooltipPosition ? `double-range-slider-${tooltipPosition}` : "double-range-slider-over"}`}
                     style={{ visibility: maxVisibility, marginLeft: `-${maxTooltipLeft}px` }}
                     ref={maxTooltipRef}
                 >
-                    <p className="max-text-holder text-holder">{max.value}</p>
+                    <p className="double-range-slider-max-text-holder double-range-slider-text-holder">{max.value}</p>
                 </div>
             </div>
         </div>

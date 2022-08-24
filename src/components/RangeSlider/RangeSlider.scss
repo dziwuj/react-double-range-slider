@@ -18,7 +18,7 @@ body {
     height: 100%;
 }
 
-.slider-container {
+.double-range-slider-container {
     position: relative;
     font-size: 16px;
     color: #fff;
@@ -28,7 +28,7 @@ body {
     margin: 150px 50px 200px 50px;
 }
 
-.rail {
+.double-range-slider-rail {
     background-color: $secondary-color;
     width: $slider-length;
     height: 10px;
@@ -36,7 +36,7 @@ body {
     z-index: 0;
 }
 
-.track {
+.double-range-slider-track {
     background-color: $primary-color;
     width: $slider-length;
     height: 10px;
@@ -45,7 +45,7 @@ body {
     top: 0px;
 }
 
-.ball {
+.double-range-slider-ball {
     background-color: $highlight-color;
     outline: $primary-color 5px solid;
     z-index: 2;
@@ -56,11 +56,11 @@ body {
     top: (-5px * calc(($ball-size - 10px) / 10px));
 }
 
-.active {
+.double-range-slider-active {
     z-index: 4;
 }
 
-.tooltip {
+.double-range-slider-tooltip {
     background-color: $primary-color;
     visibility: hidden;
     display: flex;
@@ -79,35 +79,35 @@ body {
 
 /* Position the tooltip */
 
-.ball {
-    .tooltip {
+.double-range-slider-ball {
+    .double-range-slider-tooltip {
         left: 50%;
     }
 }
 
-.over {
+.double-range-slider-over {
     bottom: calc($ball-size / 2) + 35px;
 }
-.under {
+.double-range-slider-under {
     top: calc($ball-size / 2) + 35px;
 }
 
-.mid {
+.double-range-slider-mid {
     bottom: calc($ball-size / 2) + 25px;
 }
 
-.over::after {
+.double-range-slider-over::after {
     border-color: $primary-color transparent transparent transparent;
     top: 100%; /* At the bottom of the tooltip */
     left: 50%;
 }
-.under::after {
+.double-range-slider-under::after {
     border-color: transparent transparent $primary-color transparent;
     bottom: 100%; /* At the top of the tooltip */
     left: 50%;
 }
 
-.tooltip::after {
+.double-range-slider-tooltip::after {
     content: " ";
     position: absolute;
     margin-left: -10px;
@@ -116,7 +116,7 @@ body {
     pointer-events: none;
 }
 
-.text-holder {
+.double-range-slider-text-holder {
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
     -khtml-user-select: none; /* Konqueror HTML */
@@ -126,7 +126,7 @@ body {
     white-space: nowrap;
 }
 
-.step {
+.double-range-slider-step {
     position: absolute;
     z-index: 1;
     height: 10px;
