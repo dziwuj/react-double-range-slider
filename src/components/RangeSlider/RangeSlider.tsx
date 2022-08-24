@@ -27,11 +27,11 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     const format = formatter ? formatter : (x: string | number) => `${x}`;
 
     const [min, setMin] = useState<Status>({
-        value: format(values.at(start)),
+        value: format(values[start]),
         valueIndex: start,
     });
     const [max, setMax] = useState<Status>({
-        value: format(values.at(end)),
+        value: format(values[end]),
         valueIndex: end,
     });
     if (!tooltipVisibility) tooltipVisibility = "always";
@@ -61,6 +61,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     const [ballSize, setBallSize] = useState<number | null>(null);
     const [currLeft, setCurrLeft] = useState<number | null>(null);
     const [update, setUpdate] = useState<HTMLDivElement | null>(null);
+    const firstRender = useRef<boolean>(true);
 
     function init() {
         if (railRef.current && maxRef.current) {
@@ -172,6 +173,10 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     }, [update]);
 
     useEffect(() => {
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
         onChange({ min: min.value, max: max.value, minIndex: min.valueIndex, maxIndex: max.valueIndex });
     }, [min.value, max.value]);
 
@@ -205,7 +210,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
         }
     }, [currentMousePosition]);
 
-    const jumpTo = (e: any) => {
+    const jumpTo = (e: React.MouseEvent<HTMLDivElement>) => {
         if (minRef.current && maxRef.current && ballSize && minLimit && maxLimit && minLeft !== null && maxLeft !== null) {
             const closer =
                 Math.abs(e.clientX - minRef.current.getBoundingClientRect().left) > Math.abs(e.clientX - maxRef.current.getBoundingClientRect().left)
@@ -250,7 +255,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
 
             // console.log(left);
 
-            const stringValue = values.at(index) instanceof String ? values.at(index) : values.at(index).toString();
+            const stringValue = typeof values[index] === "string" ? values[index] : values[index].toString();
 
             if (closer === minRef.current) setMin({ value: format(stringValue), valueIndex: index });
             if (closer === maxRef.current) setMax({ value: format(stringValue), valueIndex: index });

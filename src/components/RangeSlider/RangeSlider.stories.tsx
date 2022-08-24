@@ -119,7 +119,7 @@ export const Primary = () => (
             value={datesArray}
             tooltipVisibility="always"
             tooltipPosition="over"
-            onChange={(x: any) => {
+            onChange={(x) => {
                 console.log(x);
             }}
             from={"a"}
