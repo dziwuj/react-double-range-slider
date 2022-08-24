@@ -7,11 +7,11 @@ export interface RangeSliderProps {
     hasSteps?: boolean;
     tooltipVisibility?: "always" | "hover" | "never";
     tooltipPosition?: "under" | "over";
-    value: Simple | any[];
+    value: Simple | (number | string)[];
     from?: number | string;
     to?: number | string;
     formatter?: (value: number | string) => string;
-    onChange: (x: any) => void;
+    onChange: (value: { min: string; max: string; minIndex: number; maxIndex: number }) => void;
 }
 
 export interface Status {
