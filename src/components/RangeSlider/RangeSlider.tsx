@@ -61,6 +61,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     const [ballSize, setBallSize] = useState<number | null>(null);
     const [currLeft, setCurrLeft] = useState<number | null>(null);
     const [update, setUpdate] = useState<HTMLDivElement | null>(null);
+    const firstRender = useRef<boolean>(true);
 
     function init() {
         if (railRef.current && maxRef.current) {
@@ -172,6 +173,10 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     }, [update]);
 
     useEffect(() => {
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
         onChange({ min: min.value, max: max.value, minIndex: min.valueIndex, maxIndex: max.valueIndex });
     }, [min.value, max.value]);
 
