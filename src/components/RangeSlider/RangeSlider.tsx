@@ -50,6 +50,8 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     const [update, setUpdate] = useState<HTMLDivElement | null>(null);
     const firstRender = useRef<boolean>(true);
 
+    const [multiplier, setMultiplier] = useState<number>(0);
+
     function init() {
         if (railRef.current && maxRef.current) {
             setMaxLeft(railRef.current.clientWidth - maxRef.current.clientWidth / 2);
@@ -77,8 +79,22 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
         if (midTooltipRef.current)
             setMidTooltipLeft(((trackLeft + trackWidth / 2 - midTooltipRef.current.clientWidth / 2) / railRef.current!.clientWidth) * 100);
 
+        const transformValue = window.getComputedStyle(minTooltipRef.current!).transform;
+        const w = parseInt(window.getComputedStyle(minTooltipRef.current!).width);
+        var matrix = new WebKitCSSMatrix(transformValue);
+        const percentValue = (Math.round(matrix.m41 * 10) / 20 / w) * 100;
+
+        const transformValue2 = window.getComputedStyle(maxTooltipRef.current!).transform;
+        const w2 = parseInt(window.getComputedStyle(maxTooltipRef.current!).width);
+        const matrix2 = new WebKitCSSMatrix(transformValue2);
+        const percentValue2 = (Math.round(matrix2.m41 * 10) / 20 / w2) * 100;
+
+        setMultiplier(
+            isFinite(1 / (Math.floor((percentValue - percentValue2) / 10) / 10 + 1)) ? 1 / (Math.floor((percentValue - percentValue2) / 10) / 10 + 1) : 0
+        );
+
         if (minTooltipRef.current && maxTooltipRef.current && trackRef.current)
-            setMerged(minTooltipRef.current.clientWidth / 2 + maxTooltipRef.current.clientWidth / 2 > trackWidth);
+            setMerged(minTooltipRef.current.clientWidth / 2 + maxTooltipRef.current.clientWidth / 2 > trackWidth * multiplier);
     }
 
     function updateSize() {
@@ -122,7 +138,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
         }
 
         if (minTooltipRef.current && maxTooltipRef.current && trackRef.current)
-            setMerged(minTooltipRef.current.clientWidth / 2 + maxTooltipRef.current.clientWidth / 2 >= trackRef.current.clientWidth);
+            setMerged(minTooltipRef.current.clientWidth / 2 + maxTooltipRef.current.clientWidth / 2 > trackRef.current.clientWidth * multiplier);
     }, [update]);
 
     useEffect(() => {
