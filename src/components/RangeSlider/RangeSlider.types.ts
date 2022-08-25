@@ -3,6 +3,13 @@ export interface Simple {
     max: number;
 }
 
+export interface Output {
+    min: string;
+    max: string;
+    minIndex: number;
+    maxIndex: number;
+}
+
 export interface RangeSliderProps {
     hasSteps?: boolean;
     tooltipVisibility?: "always" | "hover" | "never";
@@ -11,7 +18,7 @@ export interface RangeSliderProps {
     from?: number | string;
     to?: number | string;
     formatter?: (value: number | string) => string;
-    onChange: (value: { min: string; max: string; minIndex: number; maxIndex: number }) => void;
+    onChange: (value: Output) => void;
 }
 
 export interface Status {

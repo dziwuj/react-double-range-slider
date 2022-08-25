@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./RangeSlider.scss";
 
-import { RangeSliderProps, Status } from "./RangeSlider.types";
+import { RangeSliderProps, Status, Output } from "./RangeSlider.types";
 
 const range = (start: number, end: number, step: number) => {
     return Array.from(Array.from(Array(Math.ceil((end - start) / step)).keys()), (x) => start + x * step);
@@ -49,8 +49,8 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     const [currLeft, setCurrLeft] = useState<number | null>(null);
     const [update, setUpdate] = useState<HTMLDivElement | null>(null);
     const firstRender = useRef<boolean>(true);
-
     const [multiplier, setMultiplier] = useState<number>(0);
+    const outputRef = React.useRef<Output | null>(null);
 
     function init() {
         if (railRef.current && maxRef.current) {
@@ -97,6 +97,17 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
             setMerged(minTooltipRef.current.clientWidth / 2 + maxTooltipRef.current.clientWidth / 2 > trackWidth * multiplier);
     }
 
+    function cancel() {
+        outputRef.current && onChange(outputRef.current);
+        setStartX(null);
+        setMoving(false);
+        if (tooltipVisibility === "hover") {
+            setMinVisibility("hidden");
+            setMaxVisibility("hidden");
+            setMidVisibility("hidden");
+        }
+    }
+
     function updateSize() {
         init();
     }
@@ -105,15 +116,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
         document.addEventListener("mousemove", (e) => {
             setCurrentMousePosition(e.clientX);
         });
-        document.addEventListener("mouseup", (e) => {
-            setStartX(null);
-            setMoving(false);
-            if (tooltipVisibility === "hover") {
-                setMinVisibility("hidden");
-                setMaxVisibility("hidden");
-                setMidVisibility("hidden");
-            }
-        });
+        document.addEventListener("mouseup", cancel);
         window.addEventListener("resize", updateSize);
 
         init();
@@ -146,7 +149,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
             firstRender.current = false;
             return;
         }
-        onChange({ min: min.value, max: max.value, minIndex: min.valueIndex, maxIndex: max.valueIndex });
+        outputRef.current = { min: min.value, max: max.value, minIndex: min.valueIndex, maxIndex: max.valueIndex };
     }, [min.value, max.value]);
 
     useEffect(() => {
