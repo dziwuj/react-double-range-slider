@@ -7,18 +7,6 @@ const range = (start: number, end: number, step: number) => {
     return Array.from(Array.from(Array(Math.ceil((end - start) / step)).keys()), (x) => start + x * step);
 };
 
-const checkCollision = (el1: HTMLElement, el2: HTMLElement) => {
-    var aRect = el1.getBoundingClientRect();
-    var bRect = el2.getBoundingClientRect();
-
-    return !(
-        aRect.top + aRect.height < bRect.top ||
-        aRect.top > bRect.top + bRect.height ||
-        aRect.left + aRect.width < bRect.left ||
-        aRect.left > bRect.left + bRect.width
-    );
-};
-
 const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, tooltipPosition, value, onChange, from, to, formatter }) => {
     const values = value instanceof Array ? value : Array.from(range(value.min, value.max + 1, 1));
     const start = from ? (values.indexOf(from) === -1 ? 0 : values.indexOf(from)) : 0;
@@ -40,8 +28,8 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     const [minVisibility, setMinVisibility] = useState<"visible" | "hidden">(tooltipVisibility === "always" ? "visible" : "hidden");
     const [midVisibility, setMidVisibility] = useState<"visible" | "hidden">("hidden");
     const [maxVisibility, setMaxVisibility] = useState<"visible" | "hidden">(tooltipVisibility === "always" ? "visible" : "hidden");
-    const [minTooltipLeft, setMinTooltipLeft] = useState<number | null>(null);
-    const [maxTooltipLeft, setMaxTooltipLeft] = useState<number | null>(null);
+    // const [minTooltipLeft, setMinTooltipLeft] = useState<number | null>(null);
+    // const [maxTooltipLeft, setMaxTooltipLeft] = useState<number | null>(null);
     const [midTooltipLeft, setMidTooltipLeft] = useState<number | null>(null);
     const [merged, setMerged] = useState<boolean>(false);
     const [currentMousePosition, setCurrentMousePosition] = useState<number>(0);
@@ -86,12 +74,11 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                 left: trackLeft,
             });
 
-        if (minTooltipRef.current && maxTooltipRef.current) {
-            setMinTooltipLeft(minTooltipRef.current.clientWidth / 2);
-            setMaxTooltipLeft(maxTooltipRef.current.clientWidth / 2);
-        }
+        if (midTooltipRef.current)
+            setMidTooltipLeft(((trackLeft + trackWidth / 2 - midTooltipRef.current.clientWidth / 2) / railRef.current!.clientWidth) * 100);
 
-        if (midTooltipRef.current) setMidTooltipLeft(trackLeft + trackWidth / 2 - midTooltipRef.current.clientWidth / 2);
+        if (minTooltipRef.current && maxTooltipRef.current && trackRef.current)
+            setMerged(minTooltipRef.current.clientWidth / 2 + maxTooltipRef.current.clientWidth / 2 > trackWidth);
     }
 
     function updateSize() {
@@ -120,15 +107,31 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
         };
     }, []);
 
+    // useEffect(() => {
+
+    // }, [minTooltipLeft, maxTooltipLeft]);
+
     useEffect(() => {
-        if (minTooltipRef.current && maxTooltipRef.current)
-            setMerged(
-                checkCollision(
-                    minTooltipRef.current,
-                    maxTooltipRef.current || (min.valueIndex === max.valueIndex && min.valueIndex !== null && max.valueIndex !== null)
-                )
-            );
-    }, [minTooltipLeft, maxTooltipLeft]);
+        if (firstRender.current) return;
+        if (minLeft !== null && maxLeft !== null && ballSize) setTrack({ left: minLeft + ballSize / 2, width: maxLeft - minLeft });
+        if (track && midTooltipRef.current)
+            setMidTooltipLeft(((track.left + track.width / 2 - midTooltipRef.current.clientWidth / 2) / railRef.current!.clientWidth) * 100);
+
+        if (update) {
+            updateValue(update);
+        }
+
+        if (minTooltipRef.current && maxTooltipRef.current && trackRef.current)
+            setMerged(minTooltipRef.current.clientWidth / 2 + maxTooltipRef.current.clientWidth / 2 >= trackRef.current.clientWidth);
+    }, [update]);
+
+    useEffect(() => {
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
+        onChange({ min: min.value, max: max.value, minIndex: min.valueIndex, maxIndex: max.valueIndex });
+    }, [min.value, max.value]);
 
     useEffect(() => {
         if (tooltipVisibility === "hover") {
@@ -161,23 +164,6 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
             }
         }
     }, [merged]);
-
-    useEffect(() => {
-        if (minLeft !== null && maxLeft !== null && ballSize) setTrack({ left: minLeft + ballSize / 2, width: maxLeft - minLeft });
-        if (track && midTooltipRef.current) setMidTooltipLeft(track.left + track.width / 2 - midTooltipRef.current.clientWidth / 2);
-
-        if (update) {
-            updateValue(update);
-        }
-    }, [update]);
-
-    useEffect(() => {
-        if (firstRender.current) {
-            firstRender.current = false;
-            return;
-        }
-        onChange({ min: min.value, max: max.value, minIndex: min.valueIndex, maxIndex: max.valueIndex });
-    }, [min.value, max.value]);
 
     useEffect(() => {
         if (!moving) return;
@@ -217,7 +203,6 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                     : minRef.current;
             setCurrLeft(closer.offsetLeft);
 
-            // console.log(closer);
             const newPosition = closer.offsetLeft + (e.clientX - closer.getBoundingClientRect().left) - ballSize / 2;
             const step = Math.round(newPosition / (railRef.current!.clientWidth / (values.length - 1)));
             const newStepPosition = (railRef.current!.clientWidth / (values.length - 1)) * step - ballSize / 2;
@@ -252,21 +237,10 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
             let index = Math.floor(left / marks);
             index >= values.length ? (index = values.length - 1) : index;
 
-            // console.log(left);
-
             const stringValue = typeof values[index] === "string" ? values[index] : values[index].toString();
 
             if (closer === minRef.current) setMin({ value: format(stringValue), valueIndex: index });
             if (closer === maxRef.current) setMax({ value: format(stringValue), valueIndex: index });
-
-            if (minTooltipRef.current && maxTooltipRef.current) {
-                setMinTooltipLeft(minTooltipRef.current.clientWidth / 2);
-                setMaxTooltipLeft(maxTooltipRef.current.clientWidth / 2);
-                setMerged(
-                    checkCollision(minTooltipRef.current, maxTooltipRef.current) ||
-                        (min.valueIndex === max.valueIndex && min.valueIndex !== null && max.valueIndex !== null)
-                );
-            }
         }
         setUpdate(null);
     };
@@ -348,7 +322,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
             >
                 <div
                     className={`double-range-slider-tooltip ${tooltipPosition ? `double-range-slider-${tooltipPosition}` : "double-range-slider-over"}`}
-                    style={{ visibility: minVisibility, marginLeft: `-${minTooltipLeft}px` }}
+                    style={{ visibility: minVisibility }}
                     ref={minTooltipRef}
                 >
                     <p className="double-range-slider-min-text-holder double-range-slider-text-holder">{min.value}</p>
@@ -359,7 +333,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                     tooltipPosition ? `double-range-slider-${tooltipPosition}` : "double-range-slider-over"
                 }`}
                 ref={midTooltipRef}
-                style={{ visibility: midVisibility, left: `${midTooltipLeft}px` }}
+                style={{ visibility: midVisibility, left: `${midTooltipLeft}%` }}
             >
                 <p className="double-range-slider-mid-text-holder double-range-slider-text-holder">
                     {min.value === max.value ? `${min.value}` : `${min.value} - ${max.value}`}
@@ -396,7 +370,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
             >
                 <div
                     className={`double-range-slider-tooltip ${tooltipPosition ? `double-range-slider-${tooltipPosition}` : "double-range-slider-over"}`}
-                    style={{ visibility: maxVisibility, marginLeft: `-${maxTooltipLeft}px` }}
+                    style={{ visibility: maxVisibility }}
                     ref={maxTooltipRef}
                 >
                     <p className="double-range-slider-max-text-holder double-range-slider-text-holder">{max.value}</p>

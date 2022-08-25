@@ -122,8 +122,8 @@ export const Primary = () => (
             onChange={(x) => {
                 console.log(x);
             }}
-            from={"a"}
-            to={"z"}
+            from={"03-21-2020"}
+            to={"03-25-2020"}
             formatter={(x: any) => `${x.substring(0, 5)}`}
         />
     </div>
