@@ -114,17 +114,32 @@ const someData = {
 };
 
 export const Primary = () => (
-    <div style={{ width: "400px" }}>
-        <RangeSlider
-            value={datesArray}
-            tooltipVisibility="always"
-            tooltipPosition="over"
-            onChange={(x) => {
-                console.log(x);
-            }}
-            from={"03-21-2020"}
-            to={"03-25-2020"}
-            formatter={(x: any) => `${x.substring(0, 5)}`}
-        />
-    </div>
+    <>
+        <div style={{ width: "400px" }}>
+            <RangeSlider
+                value={datesArray}
+                tooltipVisibility="always"
+                tooltipPosition="over"
+                onChange={(x) => {
+                    console.log("1: ", x);
+                }}
+                from={"03-21-2020"}
+                to={"03-25-2020"}
+                formatter={(x: any) => `${x.substring(0, 5)}`}
+            />
+        </div>
+        <div style={{ width: "400px" }}>
+            <RangeSlider
+                value={datesArray}
+                tooltipVisibility="always"
+                tooltipPosition="over"
+                onChange={(x) => {
+                    console.log("2: ", x);
+                }}
+                from={"03-21-2020"}
+                to={"03-25-2020"}
+                formatter={(x: any) => `${x.substring(0, 5)}`}
+            />
+        </div>
+    </>
 );
