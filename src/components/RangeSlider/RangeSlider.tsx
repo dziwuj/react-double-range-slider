@@ -119,7 +119,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
         window.addEventListener("resize", updateSize);
 
         init();
-
+        setUpdate({ value: null, action: "" });
         return () => {
             window.removeEventListener("resize", updateSize);
         };
