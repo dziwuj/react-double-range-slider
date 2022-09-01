@@ -1,126 +1,59 @@
-$primary-color: #f3bc3e;
+$primary-color: #3eb4f3;
 $secondary-color: #8c8c8c;
 $highlight-color: #f5f5f5;
 
 $slider-length: 400px;
-$ball-size: 25px;
+$ball-size: 10px;
 
-.double-range-slider-container {
-    position: relative;
-    font-size: 16px;
-    color: #fff;
-    width: 400px;
-    height: 100%;
-    //top right bottom left
-    margin: 150px 50px 200px 50px;
-}
+#root > div:nth-child(2) {
+    .double-range-slider-container {
+        margin: 150px 50px 200px 50px;
+    }
 
-.double-range-slider-rail {
-    background-color: $secondary-color;
-    width: $slider-length;
-    height: 10px;
-    border-radius: 50px;
-    z-index: 0;
-}
+    .double-range-slider-rail {
+        background-color: $secondary-color;
+        width: $slider-length;
+    }
 
-.double-range-slider-track {
-    background-color: $primary-color;
-    width: $slider-length;
-    height: 10px;
-    border-radius: 50px;
-    position: absolute;
-    top: 0px;
-}
+    .double-range-slider-track {
+        background-color: $primary-color;
+    }
 
-.double-range-slider-ball {
-    background-color: $highlight-color;
-    outline: $primary-color 5px solid;
-    z-index: 2;
-    width: $ball-size;
-    height: $ball-size;
-    border-radius: 50%;
-    position: absolute;
-    top: (-5px * calc(($ball-size - 10px) / 10px));
-}
+    .double-range-slider-ball {
+        background-color: $highlight-color;
+        outline: $primary-color 5px solid;
+        width: $ball-size;
+        height: $ball-size;
+        top: (-5px * calc(($ball-size - 10px) / 10px));
+    }
 
-.double-range-slider-active {
-    z-index: 4;
-}
-
-.double-range-slider-tooltip {
-    background-color: $primary-color;
-    visibility: hidden;
-    display: flex;
-    align-items: center;
-    height: 20px;
-    width: auto;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 15px 20px;
-    flex-wrap: nowrap;
-    position: absolute;
-    z-index: 1;
-    pointer-events: none;
-}
-
-/* Position the tooltip */
-
-.double-range-slider-ball {
     .double-range-slider-tooltip {
-        left: 50%;
-        transform: translateX(-50%);
+        background-color: $primary-color;
+    }
+
+    /* Position the tooltip */
+
+    .double-range-slider-over {
+        bottom: calc($ball-size / 2) + 35px;
+    }
+
+    .double-range-slider-under {
+        top: calc($ball-size / 2) + 35px;
+    }
+
+    .double-range-slider-mid {
+        bottom: calc($ball-size / 2) + 25px;
+    }
+
+    .double-range-slider-over::after {
+        border-color: $primary-color transparent transparent transparent;
+    }
+    .double-range-slider-under::after {
+        border-color: transparent transparent $primary-color transparent;
+    }
+
+    .double-range-slider-step {
+        background-color: $highlight-color;
     }
 }
-
-.double-range-slider-over {
-    bottom: calc($ball-size / 2) + 35px;
-}
-.double-range-slider-under {
-    top: calc($ball-size / 2) + 35px;
-}
-
-.double-range-slider-mid {
-    bottom: calc($ball-size / 2) + 25px;
-}
-
-.double-range-slider-over::after {
-    border-color: $primary-color transparent transparent transparent;
-    top: 100%; /* At the bottom of the tooltip */
-    left: 50%;
-}
-.double-range-slider-under::after {
-    border-color: transparent transparent $primary-color transparent;
-    bottom: 100%; /* At the top of the tooltip */
-    left: 50%;
-}
-
-.double-range-slider-tooltip::after {
-    content: " ";
-    position: absolute;
-    margin-left: -10px;
-    border-width: 10px;
-    border-style: solid;
-    pointer-events: none;
-}
-
-.double-range-slider-text-holder {
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Old versions of Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
-    white-space: nowrap;
-}
-
-.double-range-slider-step {
-    position: absolute;
-    z-index: 1;
-    height: 10px;
-    width: 5px;
-    border-radius: 30px;
-    background-color: $highlight-color;
-}
-
 ///////////////////
