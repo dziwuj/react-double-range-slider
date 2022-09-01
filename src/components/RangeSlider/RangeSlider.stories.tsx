@@ -1,9 +1,8 @@
 import React from "react";
-import styled from "styled-components";
 import RangeSlider from "./RangeSlider";
 
 // example of styling by css
-import "./RangeSlider.scss";
+// import "./RangeSlider.scss";
 
 export default {
     title: "RangeSlider",
@@ -117,41 +116,6 @@ const someData = {
     max: 10,
 };
 
-// example of styling by styled components
-const CustomSlider = styled(RangeSlider)`
-    border: 3px dashed black;
-
-    &:hover {
-        border: 5px dashed black;
-    }
-
-    ${RangeSlider.ball} {
-        border-radius: 3px;
-    }
-
-    ${RangeSlider.tooltipMax} {
-        background-color: #8a694b;
-    }
-`;
-
-// possible elements to style:
-
-// RangeSlider.container
-// RangeSlider.rail
-// RangeSlider.step
-// RangeSlider.track
-// RangeSlider.textHolder
-// RangeSlider.textHolderMin
-// RangeSlider.textHolderMid
-// RangeSlider.textHolderMax
-// RangeSlider.tooltip
-// RangeSlider.tooltipMin
-// RangeSlider.tooltipMid
-// RangeSlider.tooltipMax
-// RangeSlider.ball
-// RangeSlider.ballMin
-// RangeSlider.ballMax
-
 export const Primary = () => (
     <>
         <div style={{ width: "400px" }}>
@@ -180,30 +144,6 @@ export const Primary = () => (
                 from={"03-21-2020"}
                 to={"03-25-2020"}
                 formatter={(x: any) => `${x.substring(0, 5)}`}
-            />
-        </div>
-        <div style={{ width: "400px" }}>
-            Styled modifying the theme
-            <RangeSlider
-                value={lettersArray}
-                tooltipVisibility="always"
-                tooltipPosition="over"
-                onChange={(x) => {
-                    console.log("3: ", x);
-                }}
-                from={"c"}
-                to={"g"}
-                customTheme={{ secondaryColor: "#8a694b", highlightColor: "bisque" }}
-                hasSteps
-            />
-        </div>
-        <div style={{ width: "400px" }}>
-            Styled using styled components
-            <CustomSlider
-                value={datesArray}
-                onChange={(x) => {
-                    console.log("4: ", x);
-                }}
             />
         </div>
     </>

@@ -1,181 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import styled, { ThemeProvider } from "styled-components";
+import { RangeSliderProps, Status, Output } from "./RangeSlider.types";
 
-import { RangeSliderProps, Status, Output, Theme, ExposeElements } from "./RangeSlider.types";
-
-export interface IStep {
-    left: number;
-}
-
-export interface ITrack {
-    track: {
-        width: number;
-        left: number;
-    } | null;
-    railWidth: number;
-}
-
-export interface IBall {
-    isActive: boolean;
-    leftOffset: number;
-}
-
-export interface ITooltip {
-    tooltipPosition: "under" | "over" | undefined;
-    visibility: "visible" | "hidden";
-}
-
-export interface ITooltipMid {
-    leftOffset: number | null;
-}
-
-const Container = styled.div`
-    position: relative;
-    font-size: 16px;
-    color: #fff;
-    width: 400px;
-    height: 100%;
-    //top right bottom left
-    margin: 150px 50px 200px 50px;
-`;
-
-const Rail = styled.div`
-    background-color: ${({ theme: { secondaryColor } }) => secondaryColor};
-    width: ${({ theme: { sliderLength } }) => sliderLength}px;
-    height: 10px;
-    border-radius: 50px;
-    z-index: 0;
-`;
-
-const Step = styled.div<IStep>`
-    position: absolute;
-    z-index: 1;
-    height: 10px;
-    width: 5px;
-    border-radius: 30px;
-    background-color: ${({ theme: { highlightColor } }) => highlightColor};
-    left: ${({ left }) => left}px;
-`;
-
-const Track = styled.div<ITrack>`
-    background-color: ${({ theme: { primaryColor } }) => primaryColor};
-    width: ${({ theme: { sliderLength } }) => sliderLength}px;
-    height: 10px;
-    border-radius: 50px;
-    position: absolute;
-    top: 0px;
-    left: ${({ track, railWidth }) => (track?.left || 0 / railWidth) / 4}%;
-    width: ${({ track }) => track?.width}px;
-`;
-
-const TextHolder = styled.p`
-    -webkit-touch-callout: none; // iOS Safari
-    -webkit-user-select: none; // Safari
-    -khtml-user-select: none; // Konqueror HTML
-    -moz-user-select: none; // Old versions of Firefox
-    -ms-user-select: none; // Internet Explorer/Edge
-    user-select: none; // Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox
-    white-space: nowrap;
-`;
-
-const TextHolderMin = styled(TextHolder)``;
-const TextHolderMid = styled(TextHolder)``;
-const TextHolderMax = styled(TextHolder)``;
-
-const Tooltip = styled.div<ITooltip>`
-    background-color: ${({ theme: { primaryColor } }) => primaryColor};
-    visibility: hidden;
-    display: flex;
-    align-items: center;
-    height: 20px;
-    width: auto;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 15px 20px;
-    flex-wrap: nowrap;
-    position: absolute;
-    z-index: 1;
-    pointer-events: none;
-    visibility: ${({ visibility }) => visibility};
-    ${({ tooltipPosition, theme: { ballSize } }) => (tooltipPosition === "under" ? `top: ${ballSize / 2 + 35}px;` : `bottom: ${ballSize / 2 + 35}px;`)}
-
-    &:after {
-        content: " ";
-        position: absolute;
-        margin-left: -10px;
-        border-width: 10px;
-        border-style: solid;
-        pointer-events: none;
-        ${({ tooltipPosition, theme: { primaryColor } }) =>
-            tooltipPosition === "under"
-                ? `
-                    border-color: transparent transparent ${primaryColor} transparent;
-                    bottom: 100%; /* At the top of the tooltip */
-                    left: 50%;
-                `
-                : `
-                    border-color: ${primaryColor} transparent transparent transparent;
-                    top: 100%; /* At the bottom of the tooltip */
-                    left: 50%;
-                `}
-    }
-`;
-
-const TooltipMin = styled(Tooltip)``;
-
-const TooltipMid = styled(Tooltip)<ITooltipMid>`
-    bottom: ${({ theme: { ballSize } }) => ballSize / 2 + 25}px;
-    left: ${({ leftOffset }) => leftOffset}%;
-`;
-
-const TooltipMax = styled(Tooltip)``;
-
-const Ball = styled.div<IBall>`
-    background-color: ${({ theme: { highlightColor } }) => highlightColor};
-    outline: ${({ theme: { primaryColor } }) => primaryColor} 5px solid;
-    z-index: 2;
-    width: ${({ theme: { ballSize } }) => ballSize}px;
-    height: ${({ theme: { ballSize } }) => ballSize}px;
-    border-radius: 50%;
-    position: absolute;
-    top: ${({ theme: { ballSize } }) => (-5 * (ballSize - 10)) / 10}px;
-    left: ${({ leftOffset }) => leftOffset}%;
-    ${({ isActive }) => (isActive ? "z-index: 4;" : "")}
-
-    ${Tooltip} {
-        left: 50%;
-        transform: translateX(-50%);
-    }
-`;
-
-const BallMin = styled(Ball)``;
-const BallMax = styled(Ball)``;
-
-const theme: Theme = {
-    primaryColor: "#f3bc3e",
-    secondaryColor: "#8c8c8c",
-    highlightColor: "#f5f5f5",
-    sliderLength: 400,
-    ballSize: 25,
-};
+import "./RangeSlider.scss";
 
 const range = (start: number, end: number, step: number) => {
     return Array.from(Array.from(Array(Math.ceil((end - start) / step)).keys()), (x) => start + x * step);
 };
 
-const RangeSlider: React.FC<RangeSliderProps> & Partial<ExposeElements> = ({
-    hasSteps,
-    tooltipVisibility,
-    tooltipPosition,
-    value,
-    onChange,
-    from,
-    to,
-    formatter,
-    customTheme,
-    className
-}) => {
+const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, tooltipPosition, value, onChange, from, to, formatter }) => {
     const values = value instanceof Array ? value : Array.from(range(value.min, value.max + 1, 1));
     const start = from ? (values.indexOf(from) === -1 ? 0 : values.indexOf(from)) : 0;
     const end = to ? (values.indexOf(to) === -1 ? values.length - 1 : values.indexOf(to)) : values.length - 1;
@@ -196,12 +28,11 @@ const RangeSlider: React.FC<RangeSliderProps> & Partial<ExposeElements> = ({
     const [minVisibility, setMinVisibility] = useState<"visible" | "hidden">(tooltipVisibility === "always" ? "visible" : "hidden");
     const [midVisibility, setMidVisibility] = useState<"visible" | "hidden">("hidden");
     const [maxVisibility, setMaxVisibility] = useState<"visible" | "hidden">(tooltipVisibility === "always" ? "visible" : "hidden");
-    // const [minTooltipLeft, setMinTooltipLeft] = useState<number | null>(null);
-    // const [maxTooltipLeft, setMaxTooltipLeft] = useState<number | null>(null);
     const [midTooltipLeft, setMidTooltipLeft] = useState<number | null>(null);
     const [merged, setMerged] = useState<boolean>(false);
     const [currentMousePosition, setCurrentMousePosition] = useState<number>(0);
     const [moving, setMoving] = useState<boolean>(false);
+    const containerRef = useRef<HTMLDivElement>(null);
     const minTooltipRef = useRef<HTMLDivElement>(null);
     const midTooltipRef = useRef<HTMLDivElement>(null);
     const maxTooltipRef = useRef<HTMLDivElement>(null);
@@ -300,8 +131,32 @@ const RangeSlider: React.FC<RangeSliderProps> & Partial<ExposeElements> = ({
     useEffect(() => {
         if (firstRender.current) return;
         if (minLeft !== null && maxLeft !== null && ballSize) setTrack({ left: minLeft + ballSize / 2, width: maxLeft - minLeft });
-        if (track && midTooltipRef.current)
-            setMidTooltipLeft(((track.left + track.width / 2 - midTooltipRef.current.clientWidth / 2) / railRef.current!.clientWidth) * 100);
+        if (ballSize)
+            if (track && midTooltipRef.current && containerRef.current) {
+                let midLeft = track.left + track.width / 2 - midTooltipRef.current.clientWidth / 2;
+
+                if (midLeft <= Number(window.getComputedStyle(containerRef.current).marginLeft.replace("px", "")) * -1 - ballSize / 2) {
+                    midLeft = Number(window.getComputedStyle(containerRef.current).marginLeft.replace("px", "")) * -1 - ballSize / 2;
+                    midTooltipRef.current.style.setProperty("--after-left", `0`);
+                    midTooltipRef.current.style.setProperty("--after-margin-left", `${track.left + track.width / 2 + ballSize}px`);
+                } else if (
+                    midLeft + midTooltipRef.current.clientWidth >=
+                    containerRef.current.clientWidth + Number(window.getComputedStyle(containerRef.current).marginRight.replace("px", "")) + ballSize
+                ) {
+                    midLeft =
+                        containerRef.current.clientWidth +
+                        Number(window.getComputedStyle(containerRef.current).marginRight.replace("px", "")) -
+                        midTooltipRef.current.clientWidth +
+                        ballSize;
+                    midTooltipRef.current.style.setProperty("--after-left", `0`);
+                    midTooltipRef.current.style.setProperty("--after-margin-left", `${track.left + track.width / 2 - midLeft - ballSize / 2}px`);
+                } else {
+                    midLeft = track.left + track.width / 2 - midTooltipRef.current.clientWidth / 2;
+                    midTooltipRef.current.style.setProperty("--after-left", `50%`);
+                    midTooltipRef.current.style.setProperty("--after-margin-left", `-10px`);
+                }
+                setMidTooltipLeft((midLeft / railRef.current!.clientWidth) * 100);
+            }
 
         if (update.value) {
             updateValue(update.value);
@@ -433,165 +288,139 @@ const RangeSlider: React.FC<RangeSliderProps> & Partial<ExposeElements> = ({
     };
 
     return (
-        <ThemeProvider theme={{ ...theme, ...customTheme }}>
-            <Container className={`double-range-slider-container ${className}`}>
-                <Rail className="double-range-slider-rail" ref={railRef} onClick={jumpTo}>
-                    {hasSteps &&
-                        values.map((value, index) => {
-                            return (
-                                railRef.current &&
-                                index > 0 &&
-                                index < values.length - 1 && (
-                                    <Step
-                                        className="double-range-slider-step"
-                                        key={index}
-                                        left={(railRef.current.clientWidth / (values.length - 1)) * index - 2.5}
-                                    />
-                                )
-                            );
-                        })}
-                </Rail>
-                <Track
-                    className="double-range-slider-track"
-                    ref={trackRef}
-                    track={track}
-                    railWidth={railRef.current?.clientWidth!}
-                    onMouseOver={() => {
-                        if (tooltipVisibility === "hover" && merged) {
-                            setMidVisibility("visible");
-                            setMinVisibility("hidden");
-                            setMaxVisibility("hidden");
-                        } else if (tooltipVisibility === "hover") {
-                            setMidVisibility("hidden");
-                            setMinVisibility("hidden");
-                            setMaxVisibility("hidden");
-                        }
-                    }}
-                    onMouseOut={() => {
-                        if (tooltipVisibility === "hover" && merged) {
-                            setMidVisibility("hidden");
-                            setMinVisibility("hidden");
-                            setMaxVisibility("hidden");
-                        } else if (tooltipVisibility === "hover") {
-                            setMidVisibility("hidden");
-                            setMinVisibility("hidden");
-                            setMaxVisibility("hidden");
-                        }
-                    }}
-                    onClick={jumpTo}
-                ></Track>
-                <BallMin
-                    className={`double-range-slider-min double-range-slider-ball${lastMoved === minRef.current ? " double-range-slider-active" : ""}`}
-                    isActive={lastMoved === maxRef.current}
-                    leftOffset={(minLeft! / railRef.current?.clientWidth!) * 100}
-                    ref={minRef}
-                    onMouseOver={() => {
-                        if (tooltipVisibility === "hover" && !merged) {
-                            setMinVisibility("visible");
-                            setMidVisibility("hidden");
-                        } else if (tooltipVisibility === "hover" && merged) {
-                            setMinVisibility("hidden");
-                            setMidVisibility("visible");
-                        }
-                    }}
-                    onMouseOut={() => {
-                        if (tooltipVisibility === "hover" && !merged) {
-                            setMinVisibility("hidden");
-                            setMidVisibility("hidden");
-                        } else if (tooltipVisibility === "hover" && merged) {
-                            setMinVisibility("hidden");
-                            setMidVisibility("hidden");
-                        }
-                    }}
-                    onMouseDown={(e) => {
-                        setStartX(currentMousePosition);
-                        setLastMoved(minRef.current);
-                        setCurrLeft(minLeft);
-                        setMoving(true);
-                        document.addEventListener("mouseup", cancel, { once: true });
-                    }}
+        <div className="double-range-slider-container" ref={containerRef}>
+            <div className="double-range-slider-rail" ref={railRef} onClick={jumpTo}>
+                {hasSteps &&
+                    values.map((value, index) => {
+                        return (
+                            railRef.current &&
+                            index > 0 &&
+                            index < values.length - 1 && (
+                                <div
+                                    key={index}
+                                    className="double-range-slider-step"
+                                    style={{ left: `${(railRef.current.clientWidth / (values.length - 1)) * index - 2.5}px` }}
+                                ></div>
+                            )
+                        );
+                    })}
+            </div>
+            <div
+                className="double-range-slider-track"
+                ref={trackRef}
+                style={track ? { left: `${(track.left / railRef.current?.clientWidth!) * 100}%`, width: `${track.width}px` } : undefined}
+                onMouseOver={() => {
+                    if (tooltipVisibility === "hover" && merged) {
+                        setMidVisibility("visible");
+                        setMinVisibility("hidden");
+                        setMaxVisibility("hidden");
+                    } else if (tooltipVisibility === "hover") {
+                        setMidVisibility("hidden");
+                        setMinVisibility("hidden");
+                        setMaxVisibility("hidden");
+                    }
+                }}
+                onMouseOut={() => {
+                    if (tooltipVisibility === "hover" && merged) {
+                        setMidVisibility("hidden");
+                        setMinVisibility("hidden");
+                        setMaxVisibility("hidden");
+                    } else if (tooltipVisibility === "hover") {
+                        setMidVisibility("hidden");
+                        setMinVisibility("hidden");
+                        setMaxVisibility("hidden");
+                    }
+                }}
+                onClick={jumpTo}
+            ></div>
+            <div
+                className={`double-range-slider-min double-range-slider-ball${lastMoved === minRef.current ? " double-range-slider-active" : ""}`}
+                style={{ left: `${(minLeft! / railRef.current?.clientWidth!) * 100}%` }}
+                ref={minRef}
+                onMouseOver={() => {
+                    if (tooltipVisibility === "hover" && !merged) {
+                        setMinVisibility("visible");
+                        setMidVisibility("hidden");
+                    } else if (tooltipVisibility === "hover" && merged) {
+                        setMinVisibility("hidden");
+                        setMidVisibility("visible");
+                    }
+                }}
+                onMouseOut={() => {
+                    if (tooltipVisibility === "hover" && !merged) {
+                        setMinVisibility("hidden");
+                        setMidVisibility("hidden");
+                    } else if (tooltipVisibility === "hover" && merged) {
+                        setMinVisibility("hidden");
+                        setMidVisibility("hidden");
+                    }
+                }}
+                onMouseDown={(e) => {
+                    setStartX(currentMousePosition);
+                    setLastMoved(minRef.current);
+                    setCurrLeft(minLeft);
+                    setMoving(true);
+                    document.addEventListener("mouseup", cancel, { once: true });
+                }}
+            >
+                <div
+                    className={`double-range-slider-tooltip ${tooltipPosition ? `double-range-slider-${tooltipPosition}` : "double-range-slider-over"}`}
+                    style={{ visibility: minVisibility }}
+                    ref={minTooltipRef}
                 >
-                    <TooltipMin
-                        className={`double-range-slider-tooltip ${tooltipPosition ? `double-range-slider-${tooltipPosition}` : "double-range-slider-over"}`}
-                        tooltipPosition={tooltipPosition}
-                        visibility={minVisibility}
-                        ref={minTooltipRef}
-                    >
-                        <TextHolderMin className="double-range-slider-text-holder double-range-slider-text-holder-min">{min.value}</TextHolderMin>
-                    </TooltipMin>
-                </BallMin>
-                <TooltipMid
-                    className={`double-range-slider-mid double-range-slider-tooltip ${
-                        tooltipPosition ? `double-range-slider-${tooltipPosition}` : "double-range-slider-over"
-                    }`}
-                    tooltipPosition={tooltipPosition}
-                    visibility={midVisibility}
-                    leftOffset={midTooltipLeft}
-                    ref={midTooltipRef}
+                    <p className="double-range-slider-min-text-holder double-range-slider-text-holder">{min.value}</p>
+                </div>
+            </div>
+            <div
+                className={`double-range-slider-mid double-range-slider-tooltip ${
+                    tooltipPosition ? `double-range-slider-${tooltipPosition}` : "double-range-slider-over"
+                }`}
+                ref={midTooltipRef}
+                style={{ visibility: midVisibility, left: `${midTooltipLeft}%` }}
+            >
+                <p className="double-range-slider-mid-text-holder double-range-slider-text-holder">
+                    {min.value === max.value ? `${min.value}` : `${min.value} - ${max.value}`}
+                </p>
+            </div>
+            <div
+                className={`double-range-slider-max double-range-slider-ball${lastMoved === maxRef.current ? " double-range-slider-active" : ""}`}
+                style={{ left: `${(maxLeft! / railRef.current?.clientWidth!) * 100}%` }}
+                ref={maxRef}
+                onMouseOver={() => {
+                    if (tooltipVisibility === "hover" && !merged) {
+                        setMaxVisibility("visible");
+                        setMidVisibility("hidden");
+                    } else if (tooltipVisibility === "hover" && merged) {
+                        setMaxVisibility("hidden");
+                        setMidVisibility("visible");
+                    }
+                }}
+                onMouseOut={() => {
+                    if (tooltipVisibility === "hover" && !merged) {
+                        setMaxVisibility("hidden");
+                        setMidVisibility("hidden");
+                    } else if (tooltipVisibility === "hover" && merged) {
+                        setMaxVisibility("hidden");
+                        setMidVisibility("hidden");
+                    }
+                }}
+                onMouseDown={(e) => {
+                    setStartX(currentMousePosition);
+                    setLastMoved(maxRef.current);
+                    setCurrLeft(maxLeft);
+                    setMoving(true);
+                    document.addEventListener("mouseup", cancel, { once: true });
+                }}
+            >
+                <div
+                    className={`double-range-slider-tooltip ${tooltipPosition ? `double-range-slider-${tooltipPosition}` : "double-range-slider-over"}`}
+                    style={{ visibility: maxVisibility }}
+                    ref={maxTooltipRef}
                 >
-                    <TextHolderMid className="double-range-slider-text-holder double-range-slider-text-holder-mid">
-                        {min.value === max.value ? `${min.value}` : `${min.value} - ${max.value}`}
-                    </TextHolderMid>
-                </TooltipMid>
-                <BallMax
-                    className={`double-range-slider-max double-range-slider-ball${lastMoved === maxRef.current ? " double-range-slider-active" : ""}`}
-                    isActive={lastMoved === maxRef.current}
-                    leftOffset={(maxLeft! / railRef.current?.clientWidth!) * 100}
-                    ref={maxRef}
-                    onMouseOver={() => {
-                        if (tooltipVisibility === "hover" && !merged) {
-                            setMaxVisibility("visible");
-                            setMidVisibility("hidden");
-                        } else if (tooltipVisibility === "hover" && merged) {
-                            setMaxVisibility("hidden");
-                            setMidVisibility("visible");
-                        }
-                    }}
-                    onMouseOut={() => {
-                        if (tooltipVisibility === "hover" && !merged) {
-                            setMaxVisibility("hidden");
-                            setMidVisibility("hidden");
-                        } else if (tooltipVisibility === "hover" && merged) {
-                            setMaxVisibility("hidden");
-                            setMidVisibility("hidden");
-                        }
-                    }}
-                    onMouseDown={(e) => {
-                        setStartX(currentMousePosition);
-                        setLastMoved(maxRef.current);
-                        setCurrLeft(maxLeft);
-                        setMoving(true);
-                        document.addEventListener("mouseup", cancel, { once: true });
-                    }}
-                >
-                    <TooltipMax
-                        className={`double-range-slider-tooltip ${tooltipPosition ? `double-range-slider-${tooltipPosition}` : "double-range-slider-over"}`}
-                        tooltipPosition={tooltipPosition}
-                        visibility={maxVisibility}
-                        ref={maxTooltipRef}
-                    >
-                        <TextHolderMax className="double-range-slider-text-holder double-range-slider-text-holder-max">{max.value}</TextHolderMax>
-                    </TooltipMax>
-                </BallMax>
-            </Container>
-        </ThemeProvider>
+                    <p className="double-range-slider-max-text-holder double-range-slider-text-holder">{max.value}</p>
+                </div>
+            </div>
+        </div>
     );
 };
-
-RangeSlider.container = Container;
-RangeSlider.rail = Rail;
-RangeSlider.step = Step;
-RangeSlider.track = Track;
-RangeSlider.textHolder = TextHolder;
-RangeSlider.textHolderMin = TextHolderMin;
-RangeSlider.textHolderMid = TextHolderMid;
-RangeSlider.textHolderMax = TextHolderMax;
-RangeSlider.tooltip = Tooltip;
-RangeSlider.tooltipMin = TooltipMin;
-RangeSlider.tooltipMid = TooltipMid;
-RangeSlider.tooltipMax = TooltipMax;
-RangeSlider.ball = Ball;
-RangeSlider.ballMin = BallMin;
-RangeSlider.ballMax = BallMax;
-
 export default RangeSlider;
