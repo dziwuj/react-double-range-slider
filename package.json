@@ -1,6 +1,6 @@
 {
   "name": "react-double-range-slider",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Range slider component for React 18",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -20,8 +20,7 @@
     "react",
     "range",
     "slider",
-    "typescript",
-    "styled-components"
+    "typescript"
   ],
   "repository": {
     "type": "git",
