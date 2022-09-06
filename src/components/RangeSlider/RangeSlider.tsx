@@ -3,12 +3,51 @@ import { RangeSliderProps, Status, Output } from "./RangeSlider.types";
 
 import "./RangeSlider.scss";
 
-const range = (start: number, end: number, step: number) => {
-    return Array.from(Array.from(Array(Math.ceil((end - start) / step)).keys()), (x) => start + x * step);
+const range = function (start: number | string, end: number | string, step: number): Array<number | string> {
+    let range = [];
+
+    if (step === 0) {
+        throw TypeError("Step cannot be zero.");
+    }
+
+    if (typeof start == "undefined" || typeof end == "undefined") {
+        throw TypeError("Must pass start and end arguments.");
+    } else if (typeof start != typeof end) {
+        throw TypeError("Start and end arguments must be of same type.");
+    }
+
+    typeof step == "undefined" && (step = 1);
+
+    if (end < start) {
+        step = -step;
+    }
+
+    if (typeof start == "number") {
+        while (step > 0 ? end >= start : end <= start) {
+            range.push(start);
+            start += step;
+        }
+    } else if (typeof start == "string" && typeof end == "string") {
+        if (start.length != 1 || end.length != 1) {
+            throw TypeError("Only strings with one character are supported.");
+        }
+
+        start = start.charCodeAt(0);
+        end = end.charCodeAt(0);
+
+        while (step > 0 ? end >= start : end <= start) {
+            range.push(String.fromCharCode(start));
+            start += step;
+        }
+    } else {
+        throw TypeError("Only string and number types are supported");
+    }
+
+    return range;
 };
 
 const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, tooltipPosition, value, onChange, from, to, formatter }) => {
-    const values = value instanceof Array ? value : Array.from(range(value.min, value.max + 1, 1));
+    const values = value instanceof Array ? value : range(value.min, value.max, 1);
     const start = from ? (values.indexOf(from) === -1 ? 0 : values.indexOf(from)) : 0;
     const end = to ? (values.indexOf(to) === -1 ? values.length - 1 : values.indexOf(to)) : values.length - 1;
     const format = formatter ? formatter : (x: string | number) => `${x}`;
