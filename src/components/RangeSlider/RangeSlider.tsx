@@ -88,7 +88,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     const [update, setUpdate] = useState<{ value: HTMLDivElement | null; action: string }>({ value: null, action: "" });
     const firstRender = useRef<boolean>(true);
     const [multiplier, setMultiplier] = useState<number>(0);
-    const outputRef = React.useRef<Output | null>(null);
+    const outputRef = React.useRef<Output>({ min: min.value, max: max.value, minIndex: min.valueIndex, maxIndex: max.valueIndex });
 
     function init() {
         if (railRef.current && maxRef.current) {
@@ -97,16 +97,18 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
         }
         if (minRef.current) {
             setMinLimit(minRef.current.clientWidth / -2);
-            setMinLeft((railRef.current!.clientWidth / (values.length - 1)) * start - minRef.current.clientWidth / 2);
+            setMinLeft((railRef.current!.clientWidth / (values.length - 1)) * outputRef.current.minIndex - minRef.current.clientWidth / 2);
         }
 
-        if (maxRef.current && trackRef.current) {
-            setMaxLimit(trackRef.current.clientWidth - maxRef.current.clientWidth / 2);
-            setMaxLeft((railRef.current!.clientWidth / (values.length - 1)) * end - maxRef.current.clientWidth / 2);
+        if (maxRef.current && railRef.current) {
+            setMaxLimit(railRef.current.clientWidth - maxRef.current.clientWidth / 2);
+            setMaxLeft((railRef.current!.clientWidth / (values.length - 1)) * outputRef.current.maxIndex - maxRef.current.clientWidth / 2);
         }
 
-        const trackWidth = (railRef.current!.clientWidth / (values.length - 1)) * end - (railRef.current!.clientWidth / (values.length - 1)) * start;
-        const trackLeft = (railRef.current!.clientWidth / (values.length - 1)) * start;
+        const trackWidth =
+            (railRef.current!.clientWidth / (values.length - 1)) * outputRef.current.maxIndex -
+            (railRef.current!.clientWidth / (values.length - 1)) * outputRef.current.minIndex;
+        const trackLeft = (railRef.current!.clientWidth / (values.length - 1)) * outputRef.current.minIndex;
 
         if (trackRef.current)
             setTrack({
@@ -127,12 +129,15 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
         const matrix2 = new WebKitCSSMatrix(transformValue2);
         const percentValue2 = (Math.round(matrix2.m41 * 10) / 20 / w2) * 100;
 
-        setMultiplier(
-            isFinite(1 / (Math.floor((percentValue - percentValue2) / 10) / 10 + 1)) ? 1 / (Math.floor((percentValue - percentValue2) / 10) / 10 + 1) : 0
-        );
+        const multi = isFinite(1 / (Math.floor((percentValue - percentValue2) / 10) / 10 + 1))
+            ? 1 / (Math.floor((percentValue - percentValue2) / 10) / 10 + 1)
+            : 0;
 
-        if (minTooltipRef.current && maxTooltipRef.current && trackRef.current)
-            setMerged(minTooltipRef.current.clientWidth / 2 + maxTooltipRef.current.clientWidth / 2 > trackWidth * multiplier);
+        setMultiplier(multi);
+
+        if (minTooltipRef.current && maxTooltipRef.current && trackRef.current) {
+            setMerged(minTooltipRef.current.clientWidth / 2 + maxTooltipRef.current.clientWidth / 2 > trackWidth * multi);
+        }
     }
 
     function cancel() {
@@ -146,20 +151,16 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
         }
     }
 
-    function updateSize() {
-        init();
-    }
-
     useEffect(() => {
         document.addEventListener("mousemove", (e) => {
             setCurrentMousePosition(e.clientX);
         });
-        window.addEventListener("resize", updateSize);
+        window.addEventListener("resize", init);
 
         init();
         setUpdate({ value: null, action: "" });
         return () => {
-            window.removeEventListener("resize", updateSize);
+            window.removeEventListener("resize", init);
         };
     }, []);
 
