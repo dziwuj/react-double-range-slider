@@ -129,7 +129,7 @@ export const Primary = () => (
                 }}
                 from={"01-01-2020"}
                 to={"03-25-2020"}
-                formatter={(x: any) => `${x.substring(0, 5)}`}
+                formatter={(x: any) => `<b>${x.substring(0, 5)}</b></br>${x.substring(6, 10)}`}
             />
         </div>
         <div style={{ width: "400px" }}>

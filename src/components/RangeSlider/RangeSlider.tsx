@@ -418,10 +418,15 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                 ref={midTooltipRef}
                 style={{ visibility: midVisibility, left: `${midTooltipLeft}%` }}
             >
-                <p
-                    className="double-range-slider-mid-text-holder double-range-slider-text-holder"
-                    dangerouslySetInnerHTML={{ __html: min.value === max.value ? `${min.value}` : `${min.value} - ${max.value}` }}
-                ></p>
+                {min.value === max.value ? (
+                    <p className="double-range-slider-mid-text-holder double-range-slider-text-holder" dangerouslySetInnerHTML={{ __html: min.value }}></p>
+                ) : (
+                    <>
+                        <p className="double-range-slider-mid-text-holder double-range-slider-text-holder" dangerouslySetInnerHTML={{ __html: min.value }}></p>
+                        <p className="double-range-slider-mid-text-holder double-range-slider-text-holder">&nbsp;-&nbsp;</p>
+                        <p className="double-range-slider-mid-text-holder double-range-slider-text-holder" dangerouslySetInnerHTML={{ __html: max.value }}></p>
+                    </>
+                )}
             </div>
             <div
                 className={`double-range-slider-max double-range-slider-ball${lastMoved === maxRef.current ? " double-range-slider-active" : ""}`}
