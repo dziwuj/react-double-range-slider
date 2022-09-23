@@ -423,7 +423,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                 ) : (
                     <>
                         <p className="double-range-slider-mid-text-holder double-range-slider-text-holder" dangerouslySetInnerHTML={{ __html: min.value }}></p>
-                        <p className="double-range-slider-mid-text-holder double-range-slider-text-holder">&nbsp;-&nbsp;</p>
+                        <p className="double-range-slider-mid-text-holder double-range-slider-text-holder">&nbsp;&ndash;&nbsp;</p>
                         <p className="double-range-slider-mid-text-holder double-range-slider-text-holder" dangerouslySetInnerHTML={{ __html: max.value }}></p>
                     </>
                 )}
