@@ -1,6 +1,6 @@
 {
   "name": "react-double-range-slider",
-  "version": "2.3.2",
+  "version": "3.0.0",
   "description": "Range slider component for React 18",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

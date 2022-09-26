@@ -53,11 +53,11 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
     const format = formatter ? formatter : (x: string | number) => `${x}`;
 
     const [min, setMin] = useState<Status>({
-        value: format(values[start]),
+        value: values[start].toString(),
         valueIndex: start,
     });
     const [max, setMax] = useState<Status>({
-        value: format(values[end]),
+        value: values[end].toString(),
         valueIndex: end,
     });
     if (!tooltipVisibility) tooltipVisibility = "always";
@@ -144,6 +144,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
         outputRef.current && onChange(outputRef.current);
         setStartX(null);
         setMoving(false);
+        document.documentElement.style.overflow = "visible";
         if (tooltipVisibility === "hover") {
             setMinVisibility("hidden");
             setMaxVisibility("hidden");
@@ -151,15 +152,24 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
         }
     }
 
+    const mousemove = (e: MouseEvent) => {
+        setCurrentMousePosition(e.clientX);
+    };
+
+    const touchmove = (e: TouchEvent) => {
+        setCurrentMousePosition(e.touches[0].clientX);
+    };
+
     useEffect(() => {
-        document.addEventListener("mousemove", (e) => {
-            setCurrentMousePosition(e.clientX);
-        });
+        document.addEventListener("mousemove", mousemove);
+        document.addEventListener("touchmove", touchmove);
         window.addEventListener("resize", init);
 
         init();
         setUpdate({ value: null, action: "" });
         return () => {
+            document.removeEventListener("mousemove", mousemove);
+            document.removeEventListener("touchmove", touchmove);
             window.removeEventListener("resize", init);
         };
     }, []);
@@ -321,15 +331,15 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
 
             const stringValue = typeof values[index] === "string" ? values[index] : values[index].toString();
 
-            if (closer === minRef.current) setMin({ value: format(stringValue), valueIndex: index });
-            if (closer === maxRef.current) setMax({ value: format(stringValue), valueIndex: index });
+            if (closer === minRef.current) setMin({ value: stringValue.toString(), valueIndex: index });
+            if (closer === maxRef.current) setMax({ value: stringValue.toString(), valueIndex: index });
         }
         setUpdate({ ...update, value: null });
     };
 
     return (
         <div className="double-range-slider-container" ref={containerRef}>
-            <div className="double-range-slider-rail" ref={railRef} onClick={jumpTo}>
+            <div className="double-range-slider-rail" ref={railRef} onPointerDown={jumpTo}>
                 {hasSteps &&
                     values.map((value, index) => {
                         return (
@@ -371,7 +381,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                         setMaxVisibility("hidden");
                     }
                 }}
-                onClick={jumpTo}
+                onPointerDown={jumpTo}
             ></div>
             <div
                 className={`double-range-slider-min double-range-slider-ball${lastMoved === minRef.current ? " double-range-slider-active" : ""}`}
@@ -395,12 +405,14 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                         setMidVisibility("hidden");
                     }
                 }}
-                onMouseDown={(e) => {
-                    setStartX(currentMousePosition);
+                onPointerDown={(e) => {
+                    setStartX(e.clientX);
                     setLastMoved(minRef.current);
                     setCurrLeft(minLeft);
                     setMoving(true);
-                    document.addEventListener("mouseup", cancel, { once: true });
+                    document.documentElement.style.overflow = "hidden";
+                    if (e.pointerType === "touch") document.addEventListener("touchend", cancel, { once: true });
+                    else document.addEventListener("pointerup", cancel, { once: true });
                 }}
             >
                 <div
@@ -408,7 +420,10 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                     style={{ visibility: minVisibility }}
                     ref={minTooltipRef}
                 >
-                    <p className="double-range-slider-min-text-holder double-range-slider-text-holder" dangerouslySetInnerHTML={{ __html: min.value }}></p>
+                    <p
+                        className="double-range-slider-min-text-holder double-range-slider-text-holder"
+                        dangerouslySetInnerHTML={{ __html: format(min.value) }}
+                    ></p>
                 </div>
             </div>
             <div
@@ -419,12 +434,21 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                 style={{ visibility: midVisibility, left: `${midTooltipLeft}%` }}
             >
                 {min.value === max.value ? (
-                    <p className="double-range-slider-mid-text-holder double-range-slider-text-holder" dangerouslySetInnerHTML={{ __html: min.value }}></p>
+                    <p
+                        className="double-range-slider-mid-text-holder double-range-slider-text-holder"
+                        dangerouslySetInnerHTML={{ __html: format(min.value) }}
+                    ></p>
                 ) : (
                     <>
-                        <p className="double-range-slider-mid-text-holder double-range-slider-text-holder" dangerouslySetInnerHTML={{ __html: min.value }}></p>
+                        <p
+                            className="double-range-slider-mid-text-holder double-range-slider-text-holder"
+                            dangerouslySetInnerHTML={{ __html: format(min.value) }}
+                        ></p>
                         <p className="double-range-slider-mid-text-holder double-range-slider-text-holder">&nbsp;&ndash;&nbsp;</p>
-                        <p className="double-range-slider-mid-text-holder double-range-slider-text-holder" dangerouslySetInnerHTML={{ __html: max.value }}></p>
+                        <p
+                            className="double-range-slider-mid-text-holder double-range-slider-text-holder"
+                            dangerouslySetInnerHTML={{ __html: format(max.value) }}
+                        ></p>
                     </>
                 )}
             </div>
@@ -450,12 +474,14 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                         setMidVisibility("hidden");
                     }
                 }}
-                onMouseDown={(e) => {
-                    setStartX(currentMousePosition);
+                onPointerDown={(e) => {
+                    setStartX(e.clientX);
                     setLastMoved(maxRef.current);
                     setCurrLeft(maxLeft);
                     setMoving(true);
-                    document.addEventListener("mouseup", cancel, { once: true });
+                    document.documentElement.style.overflow = "hidden";
+                    if (e.pointerType === "touch") document.addEventListener("touchend", cancel, { once: true });
+                    else document.addEventListener("pointerup", cancel, { once: true });
                 }}
             >
                 <div
@@ -463,7 +489,10 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
                     style={{ visibility: maxVisibility }}
                     ref={maxTooltipRef}
                 >
-                    <p className="double-range-slider-max-text-holder double-range-slider-text-holder" dangerouslySetInnerHTML={{ __html: max.value }}></p>
+                    <p
+                        className="double-range-slider-max-text-holder double-range-slider-text-holder"
+                        dangerouslySetInnerHTML={{ __html: format(max.value) }}
+                    ></p>
                 </div>
             </div>
         </div>
