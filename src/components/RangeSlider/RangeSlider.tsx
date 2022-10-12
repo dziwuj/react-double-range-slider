@@ -138,6 +138,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
         if (minTooltipRef.current && maxTooltipRef.current && trackRef.current) {
             setMerged(minTooltipRef.current.clientWidth / 2 + maxTooltipRef.current.clientWidth / 2 > trackWidth * multi);
         }
+        setUpdate({ value: null, action: "" });
     }
 
     function cancel() {
@@ -166,7 +167,6 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ hasSteps, tooltipVisibility, 
         window.addEventListener("resize", init);
 
         init();
-        setUpdate({ value: null, action: "" });
         return () => {
             document.removeEventListener("mousemove", mousemove);
             document.removeEventListener("touchmove", touchmove);
